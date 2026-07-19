@@ -18,7 +18,7 @@ if [[ "$cargo_version" != "$python_version" || "$cargo_version" != "$npm_version
 fi
 
 echo "Running cargo checks..."
-cargo check -p syncmd-cli --manifest-path "$repo_root/Cargo.toml"
+cargo check -p syncmd --manifest-path "$repo_root/Cargo.toml"
 cargo check -p syncmd-py --manifest-path "$repo_root/Cargo.toml"
 
 echo "Running npm package checks..."

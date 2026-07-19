@@ -68,7 +68,7 @@ async function install() {
   const archivePath = path.join(vendorDir, "syncmd.tar.gz");
   const releaseBase =
     process.env.SYNCMD_BINARY_MIRROR ||
-    "https://github.com/langware/syncmd/releases/download";
+    "https://github.com/langware-labs/syncmd/releases/download";
   const versionTag = `v${pkg.version}`;
   const archiveName = `syncmd-${target}.tar.gz`;
   const archiveUrl = `${releaseBase}/${versionTag}/${archiveName}`;

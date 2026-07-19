@@ -2,7 +2,7 @@
 
 `syncmd` ships in three user-facing forms from one release tag:
 
-* Cargo: `cargo install syncmd-cli`
+* Cargo: `cargo install syncmd`
 
 * PyPI: `pip install syncmd`
 
@@ -24,7 +24,7 @@ Tagging `vX.Y.Z` runs `.github/workflows/release.yml`, which:
 
    * `x86_64-pc-windows-msvc`
 2. attaches those archives to the matching GitHub Release
-3. publishes `syncmd-core` then `syncmd-cli` to crates.io
+3. publishes `syncmd-core` then `syncmd` to crates.io
 4. builds and uploads Python wheels for CPython 3.9-3.13
 5. publishes the npm wrapper package in `npm/syncmd`
 

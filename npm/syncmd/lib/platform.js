@@ -6,7 +6,6 @@ function normalizeTarget() {
   const platformMap = {
     darwin: "apple-darwin",
     linux: "unknown-linux-gnu",
-    win32: "pc-windows-msvc",
   };
   const archMap = {
     arm64: "aarch64",

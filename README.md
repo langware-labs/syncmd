@@ -60,7 +60,7 @@ your working tree**, and propagates it to the rest. Edit whichever file your too
 
 ```bash
 # CLI
-cargo install syncmd-cli          # provides the `syncmd` binary
+cargo install syncmd              # provides the `syncmd` binary
 npm install -g syncmd             # downloads the matching prebuilt CLI
 
 # Python SDK

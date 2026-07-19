@@ -11,3 +11,12 @@ __pycache__/
 
 # syncmd backups (should never be committed)
 *.syncmd.bak
+
+# local deployment secrets
+env.local
+
+# local build/test artifacts
+.artifacts/
+dist-py/
+dist-py-linux/
+*.tgz

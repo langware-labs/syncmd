@@ -26,6 +26,14 @@
   "engines": {
     "node": ">=18"
   },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "cpu": [
+    "arm64",
+    "x64"
+  ],
   "dependencies": {
     "tar": "^7.4.3"
   },

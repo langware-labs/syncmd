@@ -31,11 +31,11 @@ exact steps needed to publish it.
 
 * `syncmd-core` passes `cargo publish --dry-run`
 
-* `syncmd-cli` is wired for publish, but `cargo publish --dry-run -p syncmd-cli` fails before the
+* `syncmd` is wired for publish, but `cargo publish --dry-run -p syncmd` fails before the
   first release because it depends on `syncmd-core`, which is not yet present on crates.io
 
 * This is expected for the initial publish; the workflow publishes `syncmd-core` first, waits,
-  then publishes `syncmd-cli`
+  then publishes `syncmd`
 
 ### npm
 
@@ -56,7 +56,9 @@ exact steps needed to publish it.
 * `https://pypi.org/pypi/syncmd/json` returned `404`, so the package name appears available as of
   July 19, 2026
 
-* Local wheel build was not executed in this shell because `maturin` is not installed here
+* Local Linux wheel build now passes
+
+* Local Docker wheel install/import test now passes for `linux/amd64`
 
 ## Token schema
 
@@ -99,7 +101,7 @@ Current checks performed by that script:
 
 * version alignment across Cargo, PyPI, and npm
 
-* `cargo check -p syncmd-cli`
+* `cargo check -p syncmd`
 
 * `cargo check -p syncmd-py`
 
@@ -114,7 +116,9 @@ This repo now has a repeatable local Docker test for the npm install path.
 ### What it validates
 
 * the npm tarball installs successfully
+
 * the `postinstall` downloader fetches the expected release archive
+
 * the downloaded Linux binary runs inside Docker
 
 ### Required local artifacts
@@ -122,6 +126,7 @@ This repo now has a repeatable local Docker test for the npm install path.
 For the current version, the test expects:
 
 * `syncmd-0.1.0.tgz`
+
 * `.artifacts/v0.1.0/syncmd-x86_64-unknown-linux-gnu.tar.gz`
 
 ### Build the Linux test artifact
@@ -137,7 +142,7 @@ docker run --rm --platform linux/amd64 \
   bash -lc '
     export CARGO_TARGET_DIR=/tmp/syncmd-target
     /usr/local/cargo/bin/rustup target add x86_64-unknown-linux-gnu
-    /usr/local/cargo/bin/cargo build --release -p syncmd-cli --target x86_64-unknown-linux-gnu
+    /usr/local/cargo/bin/cargo build --release -p syncmd --target x86_64-unknown-linux-gnu
     cp /tmp/syncmd-target/x86_64-unknown-linux-gnu/release/syncmd .artifacts/v0.1.0/syncmd
     tar -C .artifacts/v0.1.0 -czf .artifacts/v0.1.0/syncmd-x86_64-unknown-linux-gnu.tar.gz syncmd
   '
@@ -147,6 +152,72 @@ docker run --rm --platform linux/amd64 \
 
 ```bash
 ./scripts/test_npm_docker.sh
+```
+
+Current result on July 19, 2026: pass.
+
+## Local Docker PyPI test
+
+This repo now has a validated local Docker test for the Python wheel install path.
+
+### What it validates
+
+* a Linux wheel can be built for the package
+
+* `pip install` succeeds inside Docker
+
+* `import syncmd` works
+
+* `syncmd.plan()` works against a real temporary git repository
+
+* `to_json()` round-trips to `to_dict()`
+
+### Built wheel
+
+The validated wheel produced on July 19, 2026 was:
+
+* `dist-py-linux/syncmd-0.1.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl`
+
+### Build the Linux wheel
+
+```bash
+docker run --rm --platform linux/amd64 \
+  -v /Users/shlom/Documents/dev/syncmd:/io \
+  ghcr.io/pyo3/maturin \
+  build --release \
+  -m /io/crates/syncmd-py/Cargo.toml \
+  --interpreter python3.11 \
+  --out /io/dist-py-linux
+```
+
+### Run the Docker wheel install test
+
+```bash
+docker run --rm --platform linux/amd64 \
+  -v /Users/shlom/Documents/dev/syncmd:/work \
+  -w /work \
+  python:3.11-bullseye \
+  bash -lc 'pip install /work/dist-py-linux/syncmd-0.1.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl && python - <<\"PY\"
+import json, os, subprocess, tempfile, syncmd
+
+def git(tmp, *args):
+    subprocess.run([\"git\", *args], cwd=tmp, check=True,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+with tempfile.TemporaryDirectory() as tmp:
+    git(tmp, \"init\", \"-q\", \"-b\", \"main\")
+    git(tmp, \"config\", \"user.name\", \"t\")
+    git(tmp, \"config\", \"user.email\", \"t@t.dev\")
+    with open(os.path.join(tmp, \"CLAUDE.md\"), \"w\") as f:
+        f.write(\"rules v1\\n\")
+    git(tmp, \"add\", \"-A\")
+    git(tmp, \"commit\", \"-q\", \"-m\", \"only claude\")
+    report = syncmd.plan(tmp)
+    assert report.groups[0].name == \"instructions\"
+    assert report.groups[0].decision == \"propagated\"
+    assert json.loads(report.to_json()) == report.to_dict()
+    print(\"python syncmd ok\")
+PY'
 ```
 
 Current result on July 19, 2026: pass.
@@ -208,14 +279,14 @@ On tag `vX.Y.Z`, the workflow:
 2. Attaches those archives to the GitHub Release
 3. Publishes `syncmd-core` to crates.io
 4. Waits briefly for the crates.io index to update
-5. Publishes `syncmd-cli` to crates.io
+5. Publishes `syncmd` to crates.io
 6. Builds and uploads Python wheels for CPython 3.9 through 3.13
 7. Publishes the npm package from `npm/syncmd`
 
 ## Install commands after publish
 
 ```bash
-cargo install syncmd-cli
+cargo install syncmd
 pip install syncmd
 npm install -g syncmd
 ```
@@ -224,8 +295,10 @@ npm install -g syncmd
 
 * No GitHub repo secrets are set yet; the deploy script will populate them from local env vars.
 
-* `maturin` was not installed in this local shell, so the Python wheel build was not exercised
-  locally before handoff.
+* No GitHub Release exists yet for `syncmd`, and there are no official release assets uploaded yet.
 
-* Cargo users still install with `cargo install syncmd-cli`, not `cargo install syncmd`. That is
-  by design in the current crate naming.
+* The latest local crate rename and documentation changes are not pushed yet.
+
+* `syncmd-core` must be published first on the first release so the `syncmd` CLI crate can resolve
+  its dependency from crates.io.
+

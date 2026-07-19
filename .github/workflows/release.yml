@@ -46,7 +46,7 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Build release binary
-        run: cargo build --locked --release --package syncmd-cli --target ${{ matrix.target }}
+        run: cargo build --locked --release --package syncmd --target ${{ matrix.target }}
 
       - name: Package archive (unix)
         if: runner.os != 'Windows'
@@ -102,10 +102,10 @@ jobs:
       - name: Wait for crates.io index
         run: sleep 30
 
-      - name: Publish syncmd-cli
+      - name: Publish syncmd
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish --locked --package syncmd-cli
+        run: cargo publish --locked --package syncmd
 
   build-wheels:
     name: build-wheels (${{ matrix.os }} / ${{ matrix.target }})

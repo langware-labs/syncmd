@@ -4,7 +4,7 @@
 
 The package downloads release artifacts from:
 
-- `https://github.com/langware/syncmd/releases`
+- `https://github.com/langware-labs/syncmd/releases`
 
 Environment overrides:
 
