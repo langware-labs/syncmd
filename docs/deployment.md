@@ -1,7 +1,7 @@
 # Deployment
 
 This document records the current deployment state for `syncmd` as of July 19, 2026 and the
-exact steps needed to publish it.
+exact steps needed to complete the remaining public package releases.
 
 ## Current state
 
@@ -13,7 +13,10 @@ exact steps needed to publish it.
 
 * GitHub Actions workflow present: `release`
 
-* Repo secrets configured: none yet
+* GitHub repo secrets configured:
+  * `CARGO_REGISTRY_TOKEN`
+  * `PYPI_API_TOKEN`
+  * `NPM_TOKEN`
 
 ## What is already working
 
@@ -25,44 +28,58 @@ exact steps needed to publish it.
 
 * Release workflow checked in at `.github/workflows/release.yml`
 
-* Workflow is visible to GitHub Actions
+* GitHub release `v0.1.0` exists at:
+  * `https://github.com/langware-labs/syncmd/releases/tag/v0.1.0`
+
+* Official release archives were uploaded manually for:
+  * `x86_64-unknown-linux-gnu`
+  * `aarch64-unknown-linux-gnu`
+  * `x86_64-apple-darwin`
+  * `aarch64-apple-darwin`
 
 ### Cargo
 
 * `syncmd-core` passes `cargo publish --dry-run`
 
-* `syncmd` is wired for publish, but `cargo publish --dry-run -p syncmd` fails before the
-  first release because it depends on `syncmd-core`, which is not yet present on crates.io
+* `syncmd` is wired for public install as `cargo install syncmd`
 
-* This is expected for the initial publish; the workflow publishes `syncmd-core` first, waits,
-  then publishes `syncmd`
+* Local Docker source install test passes with:
+  * `cargo install --locked --path crates/syncmd-cli`
+
+* Official crates.io publish is currently blocked by the crates.io account, not by the package:
+  * crates.io rejected publish because the publishing account still needs a verified email address
 
 ### npm
 
 * `npm pack --dry-run ./npm/syncmd` passes
 
-* `npm view syncmd version` returned `404`, so the package name appears available as of
-  July 19, 2026
-
 * The npm package is a wrapper that downloads the GitHub Release binary for the current platform
 
-* Local Docker install test now passes for `linux/amd64` using a locally served release asset and
-  the packed npm tarball
+* Local Docker install test passes for `linux/amd64` using the packed npm tarball
+
+* Official npm publish is currently blocked by npm account policy, not by the package:
+  * npm rejected publish because the current token does not satisfy publish-time 2FA requirements
+  * a publish-capable granular token with 2FA bypass, or an interactive publish with account 2FA,
+    is required
 
 ### PyPI
 
 * `crates/syncmd-py/pyproject.toml` is set up for `maturin`
 
-* `https://pypi.org/pypi/syncmd/json` returned `404`, so the package name appears available as of
-  July 19, 2026
+* `syncmd 0.1.0` is published on PyPI:
+  * `https://pypi.org/project/syncmd/0.1.0/`
 
-* Local Linux wheel build now passes
+* Published artifacts:
+  * macOS arm64 wheel
+  * Linux x86_64 manylinux wheel
+  * source distribution
 
-* Local Docker wheel install/import test now passes for `linux/amd64`
+* Official Docker install/import test passes for `linux/amd64` with:
+  * `pip install syncmd`
 
 ## Token schema
 
-`syncmd` now follows the same token model as `flowpad-oss`:
+`syncmd` follows the same token model as `flowpad-oss`:
 
 * local shell environment variables are the source of truth
 
@@ -74,7 +91,7 @@ Expected local environment variables:
 
 * `CARGO_REGISTRY_TOKEN`
 
-* `TWINE_API_TOKEN`
+* `TWINE_API_TOKEN` or a configured `~/.pypirc`
 
 * `NPM_TOKEN`
 
@@ -87,7 +104,7 @@ When you run `./scripts/deploy_to_github.sh`, it maps them to repo secrets:
 * `NPM_TOKEN` -> `NPM_TOKEN`
 
 This matches the `flowpad-oss` pattern where PyPI publishing is driven by
-`TWINE_API_TOKEN` locally.
+`TWINE_API_TOKEN` locally. A local `~/.pypirc` also works for manual `twine` upload.
 
 ## Preflight
 
@@ -222,6 +239,62 @@ PY'
 
 Current result on July 19, 2026: pass.
 
+## Official Docker validation
+
+### Cargo
+
+Local source-install validation passed in Docker:
+
+```bash
+docker run --rm --platform linux/amd64 \
+  -v /Users/shlom/Documents/dev/syncmd:/work \
+  -w /work \
+  rust:1.89-bullseye \
+  bash -lc 'export CARGO_TARGET_DIR=/tmp/syncmd-target; /usr/local/cargo/bin/cargo install --locked --path crates/syncmd-cli --root /tmp/syncmd-install && /tmp/syncmd-install/bin/syncmd --help'
+```
+
+Status: not yet validated from crates.io because crates.io publish is still blocked by missing
+email verification on the publishing account.
+
+### PyPI
+
+Official install validation passed in Docker:
+
+```bash
+docker run --rm --platform linux/amd64 \
+  python:3.11-bullseye \
+  bash -lc 'pip install syncmd && python - <<\"PY\"
+import json, os, subprocess, tempfile, syncmd
+
+def git(tmp, *args):
+    subprocess.run([\"git\", *args], cwd=tmp, check=True,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+with tempfile.TemporaryDirectory() as tmp:
+    git(tmp, \"init\", \"-q\", \"-b\", \"main\")
+    git(tmp, \"config\", \"user.name\", \"t\")
+    git(tmp, \"config\", \"user.email\", \"t@t.dev\")
+    with open(os.path.join(tmp, \"CLAUDE.md\"), \"w\") as f:
+        f.write(\"rules v1\\n\")
+    git(tmp, \"add\", \"-A\")
+    git(tmp, \"commit\", \"-q\", \"-m\", \"only claude\")
+    report = syncmd.plan(tmp)
+    assert report.groups[0].name == \"instructions\"
+    assert report.groups[0].decision == \"propagated\"
+    assert json.loads(report.to_json()) == report.to_dict()
+    print(\"python syncmd ok\")
+PY'
+```
+
+Status: published and validated.
+
+### npm
+
+Status: not yet validated from npm registry because npm rejected publish for the current token:
+
+* `403 Forbidden`
+* publish requires account 2FA approval or a granular token with publish permission and 2FA bypass
+
 ## Deployment command
 
 With the three local token variables exported:
@@ -238,34 +311,41 @@ That script:
 4. creates and pushes `v<version>`
 5. waits on the `release` GitHub Actions workflow
 
-## First release
+For `v0.1.0`, the workflow was not used as the final source of truth because the wheel matrix had a
+Windows failure. The release artifacts and PyPI publication were completed manually.
 
-1. Confirm the version in:
+## Remaining steps
 
-   * `Cargo.toml`
+1. Cargo publish unblock:
 
-   * `crates/syncmd-py/pyproject.toml`
-
-   * `npm/syncmd/package.json`
-2. Export the local tokens:
+   * sign in to crates.io with the publishing account
+   * verify the account email at `https://crates.io/settings/profile`
+   * then run:
 
 ```bash
-export CARGO_REGISTRY_TOKEN=...
-export TWINE_API_TOKEN=...
-export NPM_TOKEN=...
+source env.local
+cargo publish --locked -p syncmd-core
+sleep 30
+cargo publish --locked -p syncmd
 ```
 
-3. Run:
+2. npm publish unblock:
+
+   * either create a granular npm token that can publish with 2FA bypass
+   * or run an interactive `npm publish` from an account session that can satisfy 2FA
+
+3. After those two unblocks, validate the official public installs:
 
 ```bash
-./scripts/deploy_to_github.sh
+docker run --rm --platform linux/amd64 rust:1.89-bullseye bash -lc 'cargo install --locked syncmd && syncmd --help'
+docker run --rm --platform linux/amd64 node:20-bookworm bash -lc 'npm install -g syncmd && syncmd --help'
 ```
 
 ## Release behavior
 
-On tag `vX.Y.Z`, the workflow:
+On tag `vX.Y.Z`, the workflow is intended to:
 
-1. Builds CLI archives for:
+1. Build CLI archives for:
 
    * `x86_64-unknown-linux-gnu`
 
@@ -275,15 +355,16 @@ On tag `vX.Y.Z`, the workflow:
 
    * `aarch64-apple-darwin`
 
-   * `x86_64-pc-windows-msvc`
-2. Attaches those archives to the GitHub Release
-3. Publishes `syncmd-core` to crates.io
-4. Waits briefly for the crates.io index to update
-5. Publishes `syncmd` to crates.io
-6. Builds and uploads Python wheels for CPython 3.9 through 3.13
-7. Publishes the npm package from `npm/syncmd`
+2. Attach those archives to the GitHub Release
+3. Publish `syncmd-core` to crates.io
+4. Wait briefly for the crates.io index to update
+5. Publish `syncmd` to crates.io
+6. Build and upload Python distributions
+7. Publish the npm package from `npm/syncmd`
 
-## Install commands after publish
+## Install commands
+
+Once all registries are fully live:
 
 ```bash
 cargo install syncmd
@@ -291,14 +372,20 @@ pip install syncmd
 npm install -g syncmd
 ```
 
-## Known gaps
+## Version checklist
 
-* No GitHub repo secrets are set yet; the deploy script will populate them from local env vars.
+Before the next release, confirm the version in:
 
-* No GitHub Release exists yet for `syncmd`, and there are no official release assets uploaded yet.
+   * `Cargo.toml`
 
-* The latest local crate rename and documentation changes are not pushed yet.
+   * `crates/syncmd-py/pyproject.toml`
 
-* `syncmd-core` must be published first on the first release so the `syncmd` CLI crate can resolve
-  its dependency from crates.io.
+   * `npm/syncmd/package.json`
 
+Export the local tokens before running deployment or manual publish commands:
+
+```bash
+export CARGO_REGISTRY_TOKEN=...
+export TWINE_API_TOKEN=...
+export NPM_TOKEN=...
+```
