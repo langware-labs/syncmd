@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const fsp = require("node:fs/promises");
+const http = require("node:http");
 const https = require("node:https");
 const path = require("node:path");
 const tar = require("tar");
@@ -14,9 +15,11 @@ async function mkdirp(dir) {
 }
 
 async function download(url, destination) {
+  const client = url.startsWith("http://") ? http : https;
+
   await new Promise((resolve, reject) => {
     const file = fs.createWriteStream(destination);
-    const request = https.get(url, (response) => {
+    const request = client.get(url, (response) => {
       if (
         response.statusCode &&
         response.statusCode >= 300 &&
