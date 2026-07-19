@@ -1,0 +1,39 @@
+{
+  "name": "syncmd",
+  "version": "0.1.0",
+  "description": "Install the syncmd CLI from npm.",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langware/syncmd.git"
+  },
+  "homepage": "https://github.com/langware/syncmd",
+  "bugs": {
+    "url": "https://github.com/langware/syncmd/issues"
+  },
+  "bin": {
+    "syncmd": "bin/syncmd.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "scripts",
+    "README.md"
+  ],
+  "scripts": {
+    "postinstall": "node ./scripts/install.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "tar": "^7.4.3"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "cli",
+    "git",
+    "sync"
+  ]
+}

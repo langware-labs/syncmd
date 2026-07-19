@@ -1,0 +1,25 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "syncmd"
+version = "0.1.0"
+description = "Keep equivalent AI-harness asset files converged on the latest change."
+readme = "../../README.md"
+requires-python = ">=3.9"
+license = { text = "MIT OR Apache-2.0" }
+authors = [{ name = "syncmd contributors" }]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+keywords = ["ai", "agents", "git", "markdown", "sync"]
+
+[tool.maturin]
+# The cdylib lib is named `syncmd`; build it as the top-level module.
+module-name = "syncmd"
+manifest-path = "Cargo.toml"

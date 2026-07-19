@@ -1,0 +1,22 @@
+[package]
+name = "syncmd-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CLI for syncmd: keep equivalent AI-harness asset files converged on the latest change."
+
+[[bin]]
+name = "syncmd"
+path = "src/main.rs"
+
+[dependencies]
+syncmd-core = { version = "0.1.0", path = "../syncmd-core" }
+clap.workspace = true
+serde_json.workspace = true
+owo-colors = { version = "4.3.0", features = ["supports-colors"] }
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+tempfile.workspace = true

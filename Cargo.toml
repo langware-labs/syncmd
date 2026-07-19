@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/syncmd-core",
+    "crates/syncmd-cli",
+    "crates/syncmd-py",
+]
+# Day-to-day `cargo build`/`cargo test` (no flags) skip the Python cdylib, which is normally
+# built via maturin. `cargo test --workspace` still includes it (links via .cargo/config.toml).
+default-members = [
+    "crates/syncmd-core",
+    "crates/syncmd-cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/langware/syncmd"
+rust-version = "1.74"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+uuid = { version = "1", features = ["v5"] }
+thiserror = "2"
+clap = { version = "4", features = ["derive"] }
+tempfile = "3"
+globset = "0.4"
+ignore = "0.4"
+toml = "0.8"
+gix = { version = "0.66", default-features = false, features = ["max-performance-safe", "blob-diff", "revision"] }

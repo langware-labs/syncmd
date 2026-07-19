@@ -1,0 +1,18 @@
+[package]
+name = "syncmd-py"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Python bindings for syncmd."
+publish = false
+
+[lib]
+name = "syncmd"
+crate-type = ["cdylib"]
+
+[dependencies]
+syncmd-core = { version = "0.1.0", path = "../syncmd-core" }
+pyo3 = { version = "0.22", features = ["abi3-py39", "extension-module"] }
+pythonize = "0.22"
+serde_json.workspace = true

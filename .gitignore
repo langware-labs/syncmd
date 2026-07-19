@@ -1,0 +1,13 @@
+/target
+**/*.rs.bk
+Cargo.lock.bak
+
+# Python / maturin
+.venv*/
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+
+# syncmd backups (should never be committed)
+*.syncmd.bak

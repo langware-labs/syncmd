@@ -1,0 +1,8 @@
+# Allow the pyo3 extension-module cdylib (syncmd-py) to link on macOS under plain `cargo`
+# (Python symbols are resolved at runtime by the interpreter). This is the pyo3-recommended
+# setting; on Linux, cdylibs already permit undefined symbols so no flag is needed.
+[target.x86_64-apple-darwin]
+rustflags = ["-C", "link-arg=-undefined", "-C", "link-arg=dynamic_lookup"]
+
+[target.aarch64-apple-darwin]
+rustflags = ["-C", "link-arg=-undefined", "-C", "link-arg=dynamic_lookup"]
