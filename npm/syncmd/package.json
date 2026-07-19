@@ -5,11 +5,11 @@
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/langware/syncmd.git"
+    "url": "git+https://github.com/serans1/syncmd.git"
   },
-  "homepage": "https://github.com/langware/syncmd",
+  "homepage": "https://github.com/serans1/syncmd",
   "bugs": {
-    "url": "https://github.com/langware/syncmd/issues"
+    "url": "https://github.com/serans1/syncmd/issues"
   },
   "bin": {
     "syncmd": "bin/syncmd.js"
