@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How syncmd syncs</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+    background: radial-gradient(120% 90% at 50% -10%, #ecebff, #f6f7fb 60%);
+    color: #1c2030;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: radial-gradient(120% 90% at 50% -10%, #242247, #0d0f18 60%); color: #eef0f8; }
+  }
+  .card { max-width: 36rem; text-align: center; }
+  .eyebrow { font-size: .75rem; letter-spacing: .16em; text-transform: uppercase; color: #5b5bf0; font-weight: 700; }
+  h1 { font-size: 2rem; margin: .5rem 0 .5rem; letter-spacing: -.02em; }
+  .lede { color: #4a5069; font-size: 1.05rem; line-height: 1.55; margin: 0 0 1.5rem; }
+  @media (prefers-color-scheme: dark) { .lede { color: #b3b8cc; } }
+  ol { text-align: left; margin: 0 0 1.5rem; padding: 0; list-style: none; counter-reset: s; }
+  li {
+    counter-increment: s; position: relative; padding: .7rem 0 .7rem 2.6rem;
+    font-size: .98rem; line-height: 1.5; border-top: 1px solid rgba(91,91,240,.14);
+  }
+  li:last-child { border-bottom: 1px solid rgba(91,91,240,.14); }
+  li::before {
+    content: counter(s); position: absolute; left: 0; top: .8rem;
+    width: 1.7rem; height: 1.7rem; border-radius: 50%; display: grid; place-items: center;
+    font-size: .8rem; font-weight: 700; color: #fff; background: #5b5bf0;
+  }
+  li strong { display: block; }
+  li span { color: #4a5069; }
+  @media (prefers-color-scheme: dark) { li span { color: #b3b8cc; } }
+  .quote {
+    font-size: .95rem; line-height: 1.5; text-align: left; margin: 0 0 1.75rem;
+    padding: .8rem 1rem; border-left: 3px solid #5b5bf0; border-radius: 0 8px 8px 0;
+    background: rgba(91,91,240,.08);
+  }
+  code { font-size: .88em; background: rgba(91,91,240,.12); padding: .1rem .35rem; border-radius: 5px; }
+  button {
+    font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer; color: #fff;
+    background: linear-gradient(180deg, #6d6cff, #5b5bf0); border: none;
+    border-radius: 14px; padding: .9rem 1.8rem;
+    box-shadow: 0 0 0 0 rgba(91,91,240,.55); animation: pulse 1.8s ease-out infinite;
+  }
+  button:hover { filter: brightness(1.07); }
+  button:active { transform: translateY(1px); }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(91,91,240,.55); }
+    70% { box-shadow: 0 0 0 18px rgba(91,91,240,0); }
+    100% { box-shadow: 0 0 0 0 rgba(91,91,240,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { button { animation: none; } }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">syncmd · 2 of 4</div>
+    <h1>One content, many mount points</h1>
+    <p class="lede">
+      syncmd treats a group of equivalent files as <strong>one logical asset</strong> — then
+      propagates the newest authored version to every member of the group.
+    </p>
+    <ol>
+      <li><strong>Group</strong><span>All the files that mean the same thing — <code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>.cursorrules</code> — form one equivalence class.</span></li>
+      <li><strong>Decide what's latest</strong><span>Uncommitted edits rank as <em>now</em>; otherwise the last commit that touched the file wins.</span></li>
+      <li><strong>Propagate</strong><span>The winner is written to every other member. A file that doesn't exist yet is simply created.</span></li>
+      <li><strong>Or report a conflict</strong><span>If two members changed independently since the group last agreed, that's a real conflict — resolved by <code>--strategy</code>, losers always backed up.</span></li>
+    </ol>
+    <p class="quote">
+      It's a <strong>compiler, not a copier</strong>: it works out which member actually changed
+      since the group last agreed, so a concurrent edit is reported — never silently clobbered.
+    </p>
+    <button id="go" type="button">Show me the commands →</button>
+  </div>
+  <script>
+    document.getElementById('go').addEventListener('click', function () {
+      parent.postMessage({ source: 'flow-journey', event: 'next', page: 'page2' }, '*');
+    });
+  </script>
+</body>
+</html>

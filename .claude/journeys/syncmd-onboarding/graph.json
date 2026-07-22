@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "id": "0f84316b-5192-40e7-894e-ec15caf218e4",
+  "name": "Welcome to syncmd",
+  "description": "A short guided tour of syncmd: the drift problem it solves, how it decides what's latest, how to run it on this repo, and how to put an agent to work.",
+  "enabled": true,
+  "auto_launch": true,
+  "config": {
+    "deadline_s": 2592000,
+    "retention_runs": 3
+  },
+  "nodes": [
+    {
+      "id": "what",
+      "node_type": "guided_step",
+      "name": "What syncmd is",
+      "node_data": {
+        "status_line": "One instruction file per harness — and they all drift. Here's the problem syncmd solves.",
+        "present": {
+          "dock": {
+            "kind": "asset_editor",
+            "vfs": "page1.html"
+          }
+        },
+        "await": {
+          "topic": "app.page.signal",
+          "target": "next"
+        }
+      }
+    },
+    {
+      "id": "how",
+      "node_type": "guided_step",
+      "name": "How it syncs",
+      "node_data": {
+        "status_line": "syncmd is a compiler, not a copier — git history decides which copy is latest.",
+        "present": {
+          "dock": {
+            "kind": "asset_editor",
+            "vfs": "page2.html"
+          }
+        },
+        "await": {
+          "topic": "app.page.signal",
+          "target": "next"
+        }
+      }
+    },
+    {
+      "id": "try",
+      "node_type": "guided_step",
+      "name": "Try it on this repo",
+      "node_data": {
+        "status_line": "The project you're looking at IS the syncmd repo — here's what to run.",
+        "present": {
+          "dock": {
+            "kind": "asset_editor",
+            "vfs": "page3.html"
+          }
+        },
+        "await": {
+          "topic": "app.page.signal",
+          "target": "next"
+        }
+      }
+    },
+    {
+      "id": "agent",
+      "node_type": "guided_step",
+      "name": "Add a vibe agent",
+      "node_data": {
+        "status_line": "Create a vibe agent from your project home — give it the syncmd rules to work by.",
+        "present": {
+          "dock": {
+            "kind": "home"
+          },
+          "highlight": "VibeAgents"
+        },
+        "await": {
+          "topic": "app.entity.created",
+          "target": "agent:*",
+          "confirm": {
+            "type": "agent",
+            "match": {
+              "kind": "vibe"
+            },
+            "min": 1,
+            "scope": "all"
+          }
+        }
+      }
+    },
+    {
+      "id": "congrats",
+      "node_type": "guided_step",
+      "name": "You're all set",
+      "node_data": {
+        "status_line": "That's the tour — your harness files stay in sync from here. 🎉",
+        "present": {
+          "dock": {
+            "kind": "asset_editor",
+            "vfs": "congrats.html"
+          }
+        },
+        "await": {
+          "topic": "app.page.signal",
+          "target": "finish"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": {
+        "node": "what",
+        "event": "done"
+      },
+      "to": {
+        "node": "how"
+      }
+    },
+    {
+      "id": "e2",
+      "from": {
+        "node": "how",
+        "event": "done"
+      },
+      "to": {
+        "node": "try"
+      }
+    },
+    {
+      "id": "e3",
+      "from": {
+        "node": "try",
+        "event": "done"
+      },
+      "to": {
+        "node": "agent"
+      }
+    },
+    {
+      "id": "e4",
+      "from": {
+        "node": "agent",
+        "event": "done"
+      },
+      "to": {
+        "node": "congrats"
+      }
+    }
+  ]
+}
