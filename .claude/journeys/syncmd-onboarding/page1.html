@@ -3,31 +3,38 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>What syncmd is</title>
+<title>The problem</title>
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
+  html, body { min-height: 100%; margin: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
     background: radial-gradient(120% 90% at 50% -10%, #ecebff, #f6f7fb 60%);
     color: #1c2030;
   }
   @media (prefers-color-scheme: dark) {
     body { background: radial-gradient(120% 90% at 50% -10%, #242247, #0d0f18 60%); color: #eef0f8; }
   }
-  .card { max-width: 34rem; padding: 2rem; text-align: center; }
+  .card { max-width: 37rem; text-align: center; }
   .eyebrow { font-size: .75rem; letter-spacing: .16em; text-transform: uppercase; color: #5b5bf0; font-weight: 700; }
-  h1 { font-size: 2rem; margin: .5rem 0 .75rem; letter-spacing: -.02em; }
-  p { color: #4a5069; font-size: 1.05rem; line-height: 1.55; margin: 0 0 1.25rem; }
-  @media (prefers-color-scheme: dark) { p { color: #b3b8cc; } }
-  .files { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; margin: 0 0 1.25rem; }
-  .files code {
-    font-size: .8rem; padding: .3rem .6rem; border-radius: 999px;
-    background: rgba(91,91,240,.1); color: #4a49c8; border: 1px solid rgba(91,91,240,.2);
+  h1 { font-size: 2rem; margin: .5rem 0 .5rem; letter-spacing: -.02em; }
+  .lede { color: #4a5069; font-size: 1.05rem; line-height: 1.55; margin: 0 0 1.25rem; }
+  @media (prefers-color-scheme: dark) { .lede { color: #b3b8cc; } }
+  .harnesses { display: flex; gap: .5rem; justify-content: center; margin: 0 0 1.25rem; flex-wrap: wrap; }
+  .harnesses span {
+    font-size: .85rem; font-weight: 600; padding: .4rem .8rem; border-radius: 999px;
+    background: rgba(91,91,240,.1); border: 1px solid rgba(91,91,240,.22); color: #4a49c8;
   }
-  @media (prefers-color-scheme: dark) { .files code { color: #b6b5ff; background: rgba(124,108,255,.16); } }
+  @media (prefers-color-scheme: dark) { .harnesses span { color: #b6b5ff; background: rgba(124,108,255,.16); } }
+  table {
+    width: 100%; border-collapse: collapse; margin: 0 0 1.25rem; font-size: .85rem; text-align: left;
+  }
+  th { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: #7c84a3; padding: .35rem .6rem; }
+  td { padding: .4rem .6rem; border-top: 1px solid rgba(91,91,240,.14); }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  code { font-size: .85em; background: rgba(91,91,240,.12); padding: .1rem .35rem; border-radius: 5px; }
   .drift { font-size: .95rem; color: #b4562a; margin: 0 0 1.75rem; }
   @media (prefers-color-scheme: dark) { .drift { color: #e0873a; } }
   button {
@@ -48,23 +55,26 @@
 </head>
 <body>
   <div class="card">
-    <div class="eyebrow">syncmd · 1 of 4</div>
-    <h1>Every harness reads its own file 📄</h1>
-    <p>
-      Claude Code reads <code>CLAUDE.md</code>. Copilot reads
-      <code>.github/copilot-instructions.md</code>. Cursor, Gemini, Windsurf, Aider — each has
-      its own. They almost always <em>mean</em> the same thing:
+    <div class="eyebrow">syncmd · 1 of 6</div>
+    <h1>Many harnesses, one team</h1>
+    <p class="lede">
+      You work with several coding agents — and every one of them keeps its own copy of
+      the assets your team relies on:
     </p>
-    <div class="files">
-      <code>CLAUDE.md</code><code>AGENTS.md</code><code>.cursorrules</code>
-      <code>GEMINI.md</code><code>.clinerules</code><code>WARP.md</code><code>…</code>
+    <div class="harnesses">
+      <span>✳ Claude Code</span><span>◎ Codex</span><span>🤖 GitHub Copilot</span>
     </div>
+    <table>
+      <tr><th>Asset</th><th>Where each harness looks</th></tr>
+      <tr><td>Instructions</td><td><code>CLAUDE.md</code> · <code>AGENTS.md</code> · <code>.github/copilot-instructions.md</code></td></tr>
+      <tr><td>Skills</td><td><code>.claude/skills/</code> · <code>.agents/skills/</code> · <code>.github/skills/</code></td></tr>
+      <tr><td>Agents</td><td><code>.claude/agents/</code> · per-harness equivalents</td></tr>
+    </table>
     <p class="drift">
-      A teammate edits one of them. The rest silently go stale — and whoever opens the repo with
-      a different tool gets outdated guidance.
+      Edit one copy and the others silently go stale — whoever opens the repo with a
+      different tool gets outdated guidance.
     </p>
-    <p><strong>syncmd keeps them converged.</strong></p>
-    <button id="go" type="button">How does it work? →</button>
+    <button id="go" type="button">There's a fix →</button>
   </div>
   <script>
     document.getElementById('go').addEventListener('click', function () {

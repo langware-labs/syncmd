@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Create CLAUDE.md</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+    background: radial-gradient(120% 90% at 50% -10%, #ecebff, #f6f7fb 60%);
+    color: #1c2030;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: radial-gradient(120% 90% at 50% -10%, #242247, #0d0f18 60%); color: #eef0f8; }
+  }
+  .card { max-width: 36rem; text-align: center; }
+  .eyebrow { font-size: .75rem; letter-spacing: .16em; text-transform: uppercase; color: #5b5bf0; font-weight: 700; }
+  h1 { font-size: 2rem; margin: .5rem 0 .5rem; letter-spacing: -.02em; }
+  .lede { color: #4a5069; font-size: 1.05rem; line-height: 1.55; margin: 0 0 1.25rem; }
+  @media (prefers-color-scheme: dark) { .lede { color: #b3b8cc; } }
+  .step { text-align: left; font-size: .95rem; margin: 0 0 .75rem; color: #4a5069; }
+  @media (prefers-color-scheme: dark) { .step { color: #b3b8cc; } }
+  .step b { color: inherit; }
+  pre {
+    text-align: left; margin: 0 0 1.25rem; padding: 1rem 1.1rem; overflow-x: auto;
+    border-radius: 12px; background: #14162a; color: #e6e8f5;
+    font-size: .85rem; line-height: 1.7;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  pre .c { color: #7f88ad; }
+  code { font-size: .88em; background: rgba(91,91,240,.12); padding: .1rem .35rem; border-radius: 5px; }
+  button {
+    font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer; color: #fff;
+    background: linear-gradient(180deg, #6d6cff, #5b5bf0); border: none;
+    border-radius: 14px; padding: .9rem 1.8rem;
+    box-shadow: 0 0 0 0 rgba(91,91,240,.55); animation: pulse 1.8s ease-out infinite;
+  }
+  button:hover { filter: brightness(1.07); }
+  button:active { transform: translateY(1px); }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(91,91,240,.55); }
+    70% { box-shadow: 0 0 0 18px rgba(91,91,240,0); }
+    100% { box-shadow: 0 0 0 0 rgba(91,91,240,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { button { animation: none; } }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">syncmd · 4 of 6</div>
+    <h1>Try it: create <code>CLAUDE.md</code></h1>
+    <p class="lede">
+      Give this repo an instruction file for <strong>one</strong> harness — Claude Code.
+      In a moment, syncmd will hand it to all the others.
+    </p>
+    <p class="step"><b>1.</b> Open a terminal in this project (project home → <b>New session → Terminal</b>).</p>
+    <p class="step"><b>2.</b> Create the file:</p>
+<pre>cat &gt; CLAUDE.md &lt;&lt;'EOF'
+# Team guidelines
+- Prefer small, reviewable changes
+- Always run the tests before pushing
+EOF</pre>
+    <button id="go" type="button">Created it →</button>
+  </div>
+  <script>
+    document.getElementById('go').addEventListener('click', function () {
+      parent.postMessage({ source: 'flow-journey', event: 'next', page: 'page4' }, '*');
+    });
+  </script>
+</body>
+</html>

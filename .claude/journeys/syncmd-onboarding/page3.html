@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Try syncmd on this repo</title>
+<title>How it works</title>
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
@@ -22,20 +22,26 @@
   h1 { font-size: 2rem; margin: .5rem 0 .5rem; letter-spacing: -.02em; }
   .lede { color: #4a5069; font-size: 1.05rem; line-height: 1.55; margin: 0 0 1.5rem; }
   @media (prefers-color-scheme: dark) { .lede { color: #b3b8cc; } }
-  pre {
-    text-align: left; margin: 0 0 1.25rem; padding: 1rem 1.1rem; overflow-x: auto;
-    border-radius: 12px; background: #14162a; color: #e6e8f5;
-    font-size: .85rem; line-height: 1.7;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  ol { text-align: left; margin: 0 0 1.5rem; padding: 0; list-style: none; counter-reset: s; }
+  li {
+    counter-increment: s; position: relative; padding: .7rem 0 .7rem 2.6rem;
+    font-size: .98rem; line-height: 1.5; border-top: 1px solid rgba(91,91,240,.14);
   }
-  pre .c { color: #7f88ad; }
-  pre .k { color: #9d97ff; }
+  li:last-child { border-bottom: 1px solid rgba(91,91,240,.14); }
+  li::before {
+    content: counter(s); position: absolute; left: 0; top: .8rem;
+    width: 1.7rem; height: 1.7rem; border-radius: 50%; display: grid; place-items: center;
+    font-size: .8rem; font-weight: 700; color: #fff; background: #5b5bf0;
+  }
+  li strong { display: block; }
+  li span { color: #4a5069; }
+  @media (prefers-color-scheme: dark) { li span { color: #b3b8cc; } }
+  code { font-size: .88em; background: rgba(91,91,240,.12); padding: .1rem .35rem; border-radius: 5px; }
   .note {
     font-size: .9rem; line-height: 1.5; text-align: left; margin: 0 0 1.75rem;
     padding: .8rem 1rem; border-left: 3px solid #22a06b; border-radius: 0 8px 8px 0;
     background: rgba(34,160,107,.1);
   }
-  code { font-size: .88em; background: rgba(91,91,240,.12); padding: .1rem .35rem; border-radius: 5px; }
   button {
     font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer; color: #fff;
     background: linear-gradient(180deg, #6d6cff, #5b5bf0); border: none;
@@ -54,28 +60,20 @@
 </head>
 <body>
   <div class="card">
-    <div class="eyebrow">syncmd · 3 of 4</div>
-    <h1>The project you're in <em>is</em> syncmd</h1>
-    <p class="lede">
-      It's already cloned and indexed here. Open a terminal in this project and try it:
-    </p>
-<pre><span class="c"># preview only — compute the plan, write nothing</span>
-<span class="k">syncmd</span> plan .
-
-<span class="c"># sync every known group in the repo</span>
-<span class="k">syncmd</span> sync .
-
-<span class="c"># just the group one file belongs to</span>
-<span class="k">syncmd</span> sync CLAUDE.md
-
-<span class="c"># refuse to write when members diverged, and say so</span>
-<span class="k">syncmd</span> sync . --strategy error</pre>
+    <div class="eyebrow">syncmd · 3 of 6</div>
+    <h1>How it works</h1>
+    <p class="lede">Four moves, all decided from <strong>git history</strong> plus your working tree:</p>
+    <ol>
+      <li><strong>Group</strong><span>Files that mean the same thing — <code>CLAUDE.md</code>, <code>AGENTS.md</code>, <code>.github/copilot-instructions.md</code> — form one equivalence class.</span></li>
+      <li><strong>Decide what's latest</strong><span>Your uncommitted edit ranks as <em>now</em>; otherwise the last commit that touched each file wins.</span></li>
+      <li><strong>Propagate</strong><span>The winner is written to every other member. A file that doesn't exist yet is simply created.</span></li>
+      <li><strong>Or report a conflict</strong><span>Two members edited independently? That's a real conflict — resolved per <code>--strategy</code>, losers always backed up.</span></li>
+    </ol>
     <p class="note">
-      syncmd only works <strong>inside a git repo</strong> — the whole "which copy is latest"
-      decision comes from history. It never initialises a repo or commits for you, and losers of
-      a conflict are backed up as <code>&lt;member&gt;.syncmd.bak</code>.
+      Preview first, write second: <code>syncmd plan</code> computes what would change and
+      touches nothing; <code>syncmd sync</code> applies it.
     </p>
-    <button id="go" type="button">Next: put an agent on it →</button>
+    <button id="go" type="button">Let's try it →</button>
   </div>
   <script>
     document.getElementById('go').addEventListener('click', function () {

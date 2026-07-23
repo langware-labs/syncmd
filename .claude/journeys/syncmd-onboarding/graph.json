@@ -2,7 +2,7 @@
   "version": 1,
   "id": "0f84316b-5192-40e7-894e-ec15caf218e4",
   "name": "Welcome to syncmd",
-  "description": "A short guided tour of syncmd: the drift problem it solves, how it decides what's latest, how to run it on this repo, and how to put an agent to work.",
+  "description": "A guided tour of syncmd: why multi-harness assets drift, how syncmd keeps them converged, and a hands-on run \u2014 create CLAUDE.md, sync it, and watch AGENTS.md appear.",
   "enabled": true,
   "auto_launch": true,
   "config": {
@@ -11,11 +11,11 @@
   },
   "nodes": [
     {
-      "id": "what",
+      "id": "problem",
       "node_type": "guided_step",
-      "name": "What syncmd is",
+      "name": "The problem",
       "node_data": {
-        "status_line": "One instruction file per harness \u2014 and they all drift. Here's the problem syncmd solves.",
+        "status_line": "Claude Code, Codex, Copilot \u2014 each reads its own copy of your instructions, skills, and agents.",
         "present": {
           "dock": {
             "kind": "asset_editor",
@@ -29,11 +29,11 @@
       }
     },
     {
-      "id": "how",
+      "id": "meet",
       "node_type": "guided_step",
-      "name": "How it syncs",
+      "name": "Meet syncmd",
       "node_data": {
-        "status_line": "syncmd is a compiler, not a copier \u2014 git history decides which copy is latest.",
+        "status_line": "One logical asset, many mount points \u2014 a compiler, not a copier.",
         "present": {
           "dock": {
             "kind": "asset_editor",
@@ -47,11 +47,11 @@
       }
     },
     {
-      "id": "try",
+      "id": "how",
       "node_type": "guided_step",
-      "name": "Try it on this repo",
+      "name": "How it works",
       "node_data": {
-        "status_line": "The project you're looking at IS the syncmd repo \u2014 here's what to run.",
+        "status_line": "Group \u2192 decide latest from git history \u2192 propagate \u2192 or report a conflict.",
         "present": {
           "dock": {
             "kind": "asset_editor",
@@ -65,28 +65,56 @@
       }
     },
     {
-      "id": "agent",
+      "id": "create",
       "node_type": "guided_step",
-      "name": "Add a vibe agent",
+      "name": "Create CLAUDE.md",
       "node_data": {
-        "status_line": "Create a vibe agent from your project home \u2014 give it the syncmd rules to work by.",
+        "status_line": "Open a terminal in this project and create CLAUDE.md \u2014 instructions for ONE harness.",
         "present": {
           "dock": {
-            "kind": "home"
-          },
-          "highlight": "VibeAgents"
+            "kind": "asset_editor",
+            "vfs": "page4.html"
+          }
         },
         "await": {
-          "topic": "app.entity.updated",
-          "target": "agent:*",
-          "confirm": {
-            "type": "agent",
-            "match": {
-              "kind": "vibe"
-            },
-            "min": 1,
-            "scope": "all"
+          "topic": "app.page.signal",
+          "target": "next"
+        }
+      }
+    },
+    {
+      "id": "sync",
+      "node_type": "guided_step",
+      "name": "Run plan, then sync",
+      "node_data": {
+        "status_line": "syncmd plan . previews; syncmd sync . propagates your file to the group.",
+        "present": {
+          "dock": {
+            "kind": "asset_editor",
+            "vfs": "page5.html"
           }
+        },
+        "await": {
+          "topic": "app.page.signal",
+          "target": "next"
+        }
+      }
+    },
+    {
+      "id": "validate",
+      "node_type": "guided_step",
+      "name": "Validate AGENTS.md",
+      "node_data": {
+        "status_line": "cat AGENTS.md \u2014 the other harnesses now carry the same guidance.",
+        "present": {
+          "dock": {
+            "kind": "asset_editor",
+            "vfs": "page6.html"
+          }
+        },
+        "await": {
+          "topic": "app.page.signal",
+          "target": "next"
         }
       }
     },
@@ -95,7 +123,7 @@
       "node_type": "guided_step",
       "name": "You're all set",
       "node_data": {
-        "status_line": "That's the tour \u2014 your harness files stay in sync from here. \ud83c\udf89",
+        "status_line": "That's the tour \u2014 your harness files move together from here. \ud83c\udf89",
         "present": {
           "dock": {
             "kind": "asset_editor",
@@ -113,7 +141,17 @@
     {
       "id": "e1",
       "from": {
-        "node": "what",
+        "node": "problem",
+        "event": "done"
+      },
+      "to": {
+        "node": "meet"
+      }
+    },
+    {
+      "id": "e2",
+      "from": {
+        "node": "meet",
         "event": "done"
       },
       "to": {
@@ -121,29 +159,39 @@
       }
     },
     {
-      "id": "e2",
+      "id": "e3",
       "from": {
         "node": "how",
         "event": "done"
       },
       "to": {
-        "node": "try"
-      }
-    },
-    {
-      "id": "e3",
-      "from": {
-        "node": "try",
-        "event": "done"
-      },
-      "to": {
-        "node": "agent"
+        "node": "create"
       }
     },
     {
       "id": "e4",
       "from": {
-        "node": "agent",
+        "node": "create",
+        "event": "done"
+      },
+      "to": {
+        "node": "sync"
+      }
+    },
+    {
+      "id": "e5",
+      "from": {
+        "node": "sync",
+        "event": "done"
+      },
+      "to": {
+        "node": "validate"
+      }
+    },
+    {
+      "id": "e6",
+      "from": {
+        "node": "validate",
         "event": "done"
       },
       "to": {
