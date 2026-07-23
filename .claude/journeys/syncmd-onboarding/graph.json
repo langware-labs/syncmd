@@ -65,38 +65,122 @@
       }
     },
     {
-      "id": "create",
+      "id": "terminal",
       "node_type": "guided_step",
-      "name": "Create CLAUDE.md",
+      "name": "Open the terminal",
       "node_data": {
-        "status_line": "Open a terminal in this project and create CLAUDE.md \u2014 instructions for ONE harness.",
-        "present": {
-          "dock": {
-            "kind": "asset_editor",
-            "vfs": "page4.html"
-          }
+        "status_line": "Open a terminal in this project \u2014 every command below runs here.",
+        "group": "Let's try it",
+        "present": {},
+        "await": {
+          "topic": "app.journey.act.done",
+          "target": "open_terminal:terminal",
+          "manual": true
+        },
+        "act": {
+          "kind": "open_terminal",
+          "target": "terminal"
+        }
+      }
+    },
+    {
+      "id": "write",
+      "node_type": "guided_step",
+      "name": "Write CLAUDE.md",
+      "node_data": {
+        "status_line": "Write an instruction file for ONE harness \u2014 Claude Code.",
+        "group": "Let's try it",
+        "present": {},
+        "act": {
+          "kind": "run",
+          "target": "term",
+          "command": "cat > CLAUDE.md <<'EOF'\n# Team guidelines\n- Prefer small, reviewable changes\n- Always run the tests before pushing\nEOF"
         },
         "await": {
-          "topic": "app.page.signal",
-          "target": "next"
+          "topic": "app.journey.act.done",
+          "target": "run:term",
+          "manual": true
+        }
+      }
+    },
+    {
+      "id": "check_claude",
+      "node_type": "guided_step",
+      "name": "Check it was created",
+      "node_data": {
+        "status_line": "List it and print it back.",
+        "group": "Let's try it",
+        "present": {},
+        "act": {
+          "kind": "run",
+          "target": "term",
+          "command": "ls -l CLAUDE.md && cat CLAUDE.md"
+        },
+        "await": {
+          "topic": "app.journey.act.done",
+          "target": "run:term",
+          "manual": true
+        }
+      }
+    },
+    {
+      "id": "verify_claude",
+      "node_type": "guided_step",
+      "name": "Verify on disk",
+      "node_data": {
+        "status_line": "Proof, not vibes: CLAUDE.md is read back from disk.",
+        "group": "Let's try it",
+        "present": {},
+        "act": {
+          "kind": "fs_check",
+          "target": "verify_claude",
+          "path": "CLAUDE.md",
+          "contains": "Team guidelines"
+        },
+        "await": {
+          "topic": "app.journey.act.done",
+          "target": "fs_check:verify_claude",
+          "manual": true
+        }
+      }
+    },
+    {
+      "id": "plan",
+      "node_type": "guided_step",
+      "name": "syncmd plan",
+      "node_data": {
+        "status_line": "Preview: what syncmd WOULD write. Nothing changes yet.",
+        "group": "Let's try it",
+        "present": {},
+        "act": {
+          "kind": "run",
+          "target": "term",
+          "command": "syncmd plan ."
+        },
+        "await": {
+          "topic": "app.journey.act.done",
+          "target": "run:term",
+          "manual": true
         }
       }
     },
     {
       "id": "sync",
       "node_type": "guided_step",
-      "name": "Run plan, then sync",
+      "name": "syncmd sync",
       "node_data": {
-        "status_line": "syncmd plan . previews; syncmd sync . propagates your file to the group.",
-        "present": {
-          "dock": {
-            "kind": "asset_editor",
-            "vfs": "page5.html"
-          }
+        "status_line": "Apply it \u2014 CLAUDE.md is propagated to every mount point.",
+        "group": "Let's try it",
+        "present": {},
+        "act": {
+          "kind": "run",
+          "target": "term",
+          "command": "syncmd sync ."
         },
         "await": {
-          "topic": "app.page.signal",
-          "target": "next"
+          "topic": "app.journey.act.done",
+          "target": "run:term",
+          "manual": true
         }
       }
     },
@@ -105,16 +189,39 @@
       "node_type": "guided_step",
       "name": "Validate AGENTS.md",
       "node_data": {
-        "status_line": "cat AGENTS.md \u2014 the other harnesses now carry the same guidance.",
-        "present": {
-          "dock": {
-            "kind": "asset_editor",
-            "vfs": "page6.html"
-          }
+        "status_line": "cat AGENTS.md \u2014 the other harnesses now carry it.",
+        "group": "Let's try it",
+        "present": {},
+        "act": {
+          "kind": "run",
+          "target": "term",
+          "command": "cat AGENTS.md"
         },
         "await": {
-          "topic": "app.page.signal",
-          "target": "next"
+          "topic": "app.journey.act.done",
+          "target": "run:term",
+          "manual": true
+        }
+      }
+    },
+    {
+      "id": "verify_agents",
+      "node_type": "guided_step",
+      "name": "Verify the copy",
+      "node_data": {
+        "status_line": "Same bytes, different mount point \u2014 read back from disk.",
+        "group": "Let's try it",
+        "present": {},
+        "act": {
+          "kind": "fs_check",
+          "target": "verify_agents",
+          "path": "AGENTS.md",
+          "contains": "Team guidelines"
+        },
+        "await": {
+          "topic": "app.journey.act.done",
+          "target": "fs_check:verify_agents",
+          "manual": true
         }
       }
     },
@@ -165,13 +272,53 @@
         "event": "done"
       },
       "to": {
-        "node": "create"
+        "node": "terminal"
       }
     },
     {
       "id": "e4",
       "from": {
-        "node": "create",
+        "node": "terminal",
+        "event": "done"
+      },
+      "to": {
+        "node": "write"
+      }
+    },
+    {
+      "id": "e5",
+      "from": {
+        "node": "write",
+        "event": "done"
+      },
+      "to": {
+        "node": "check_claude"
+      }
+    },
+    {
+      "id": "e6",
+      "from": {
+        "node": "check_claude",
+        "event": "done"
+      },
+      "to": {
+        "node": "verify_claude"
+      }
+    },
+    {
+      "id": "e7",
+      "from": {
+        "node": "verify_claude",
+        "event": "done"
+      },
+      "to": {
+        "node": "plan"
+      }
+    },
+    {
+      "id": "e8",
+      "from": {
+        "node": "plan",
         "event": "done"
       },
       "to": {
@@ -179,7 +326,7 @@
       }
     },
     {
-      "id": "e5",
+      "id": "e9",
       "from": {
         "node": "sync",
         "event": "done"
@@ -189,9 +336,19 @@
       }
     },
     {
-      "id": "e6",
+      "id": "e10",
       "from": {
         "node": "validate",
+        "event": "done"
+      },
+      "to": {
+        "node": "verify_agents"
+      }
+    },
+    {
+      "id": "e11",
+      "from": {
+        "node": "verify_agents",
         "event": "done"
       },
       "to": {
