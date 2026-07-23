@@ -108,13 +108,14 @@
       "node_type": "guided_step",
       "name": "Check it was created",
       "node_data": {
-        "status_line": "List it and print it back.",
+        "status_line": "ls + cat it \u2014 the step passes only if the output really shows it.",
         "group": "Let's try it",
         "present": {},
         "act": {
           "kind": "run",
           "target": "term",
-          "command": "ls -l CLAUDE.md && cat CLAUDE.md"
+          "command": "ls -l CLAUDE.md && cat CLAUDE.md",
+          "contains": "Team guidelines"
         },
         "await": {
           "topic": "app.journey.act.done",
@@ -149,13 +150,14 @@
       "node_type": "guided_step",
       "name": "syncmd plan",
       "node_data": {
-        "status_line": "Preview: what syncmd WOULD write. Nothing changes yet.",
+        "status_line": "Preview \u2014 the plan must name AGENTS.md as a creation target.",
         "group": "Let's try it",
         "present": {},
         "act": {
           "kind": "run",
           "target": "term",
-          "command": "syncmd plan ."
+          "command": "syncmd plan .",
+          "contains": "AGENTS.md"
         },
         "await": {
           "topic": "app.journey.act.done",
@@ -189,13 +191,14 @@
       "node_type": "guided_step",
       "name": "Validate AGENTS.md",
       "node_data": {
-        "status_line": "cat AGENTS.md \u2014 the other harnesses now carry it.",
+        "status_line": "cat AGENTS.md \u2014 the output must carry the same guidance.",
         "group": "Let's try it",
         "present": {},
         "act": {
           "kind": "run",
           "target": "term",
-          "command": "cat AGENTS.md"
+          "command": "cat AGENTS.md",
+          "contains": "Team guidelines"
         },
         "await": {
           "topic": "app.journey.act.done",
