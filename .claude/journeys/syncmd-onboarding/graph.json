@@ -23,7 +23,7 @@
           }
         },
         "await": {
-          "topic": "app.page.signal",
+          "tag": "app.page.signal",
           "target": "next"
         }
       }
@@ -41,7 +41,7 @@
           }
         },
         "await": {
-          "topic": "app.page.signal",
+          "tag": "app.page.signal",
           "target": "next"
         }
       }
@@ -59,7 +59,7 @@
           }
         },
         "await": {
-          "topic": "app.page.signal",
+          "tag": "app.page.signal",
           "target": "next"
         }
       }
@@ -73,7 +73,7 @@
         "group": "Let's try it",
         "present": {},
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "open_terminal:terminal",
           "manual": true
         },
@@ -97,7 +97,7 @@
           "command": "cat > CLAUDE.md <<'EOF'\n# Team guidelines\n- Prefer small, reviewable changes\n- Always run the tests before pushing\nEOF"
         },
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "run:term",
           "manual": true
         }
@@ -118,7 +118,7 @@
           "contains": "Team guidelines"
         },
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "run:term",
           "manual": true
         }
@@ -139,7 +139,7 @@
           "contains": "Team guidelines"
         },
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "fs_check:verify_claude",
           "manual": true
         }
@@ -160,7 +160,7 @@
           "contains": "AGENTS.md"
         },
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "run:term",
           "manual": true
         }
@@ -180,7 +180,7 @@
           "command": "syncmd sync ."
         },
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "run:term",
           "manual": true
         }
@@ -201,7 +201,7 @@
           "contains": "Team guidelines"
         },
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "run:term",
           "manual": true
         }
@@ -222,7 +222,7 @@
           "contains": "Team guidelines"
         },
         "await": {
-          "topic": "app.journey.act.done",
+          "tag": "app.journey.act.done",
           "target": "fs_check:verify_agents",
           "manual": true
         }
@@ -241,7 +241,7 @@
           }
         },
         "await": {
-          "topic": "app.page.signal",
+          "tag": "app.page.signal",
           "target": "finish"
         }
       }
